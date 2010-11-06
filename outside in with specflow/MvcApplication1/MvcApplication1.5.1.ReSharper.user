@@ -1,0 +1,32 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/d:Controllers/f:HomeController.cs" caret="263" fromTop="11" />
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/f:Global.asax.cs" caret="445" fromTop="16" />
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/d:Routing/f:DefaultRouting.cs" caret="366" fromTop="13" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/f:Global.asax.cs" caret="454" fromTop="16" />
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/d:Routing/f:DefaultRouting.cs" caret="578" fromTop="20" />
+      <File id="E33DAA23-60B0-443F-83AB-36D98D54123F/d:Routing/f:DefaultRouting.cs" caret="240" fromTop="9" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+</Configuration>
