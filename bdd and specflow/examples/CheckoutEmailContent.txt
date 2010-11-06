@@ -1,0 +1,381 @@
+Feature: Create checkout form tag values
+	In order to present to customers their order information
+	As the system
+	I want to convert the checkout order information into a long detailed string
+
+Scenario: Valid order
+	Given I have a checkout order
+	And the imis order information on the checkout order is
+	| Field   | Value |
+	| OrderId | 12345 |
+	And the billing and shipping information on the checkout order is
+	| Field               | Value                |
+	| BillingFirstName    | billing first name   |
+	| BillingLastName     | billing last name    |
+	| BillingOrganization | billing organization |
+	| BillingAddress      | billing address      |
+	| BillingAddress2     | billing address 2    |
+	| BillingCity         | billing city         |
+	| BillingState        | billing state        |
+	| BillingZip          | billing zip          |
+	| BillingCountry      | billing country      |
+	| UserPhone           | user phone           |
+	| UserEmail           | user email           |
+	| ShippingFirstName   | shipping first name  |
+	| ShippingLastName    | shipping last name   |
+	| ShippingOrganization | shipping organization |
+	| ShippingAddress     | shipping address     |
+	| ShippingAddress2    | shipping address 2   |
+	| ShippingCity        | shipping city        |
+	| ShippingState       | shipping state       |
+	| ShippingZip         | shipping zip         |
+	| ShippingCountry     | shipping country     |
+	And the following purchased items are on the checkout order
+	| Name       | ProductCode | Price     | Quantity |
+	| product #1 | prod1       | 23.430000 | 1        |
+	| product #2 | prod2       | 50.000000 | 2        |
+	And I have the following charge lines on the checkout order
+	| Name     | Total      | Sequence |
+	| Total    | 200.00000  | 4        |
+	| Subtotal | 100.00000  | 1        |
+	| Tax      | 50.000000  | 2        |
+	When I create the checkout order form tag value
+	Then the checkout order form tag value should be
+"""
+Order ID: 12345
+
+Billing Information:
+billing first name billing last name
+billing organization
+billing address
+billing address 2
+billing city, billing state billing zip
+billing country
+
+user phone
+user email
+
+Shipping Information:
+shipping first name shipping last name
+shipping organization
+shipping address
+shipping address 2
+shipping city, shipping state shipping zip
+shipping country
+
+product #1 (prod1)
+Price: $23.43
+Quantity: 1
+
+product #2 (prod2)
+Price: $50.00
+Quantity: 2
+
+Subtotal: $100.00
+Tax: $50.00
+Total: $200.00
+"""
+
+Scenario: Valid order without billing street 2
+	Given I have a checkout order
+	And the imis order information on the checkout order is
+	| Field   | Value |
+	| OrderId | 12345 |
+	And the billing and shipping information on the checkout order is
+	| Field               | Value                |
+	| BillingFirstName    | billing first name   |
+	| BillingLastName     | billing last name    |
+	| BillingOrganization | billing organization |
+	| BillingAddress      | billing address      |
+	| BillingCity         | billing city         |
+	| BillingState        | billing state        |
+	| BillingZip          | billing zip          |
+	| BillingCountry      | billing country      |
+	| UserPhone           | user phone           |
+	| UserEmail           | user email           |
+	| ShippingFirstName   | shipping first name  |
+	| ShippingLastName    | shipping last name   |
+	| ShippingOrganization | shipping organization |
+	| ShippingAddress     | shipping address     |
+	| ShippingAddress2    | shipping address2    |
+	| ShippingCity        | shipping city        |
+	| ShippingState       | shipping state       |
+	| ShippingZip         | shipping zip         |
+	| ShippingCountry     | shipping country     |
+	And the following purchased items are on the checkout order
+	| Name       | ProductCode | Price     | Quantity |
+	| product #1 | prod1       | 23.430000 | 1        |
+	| product #2 | prod2       | 50.000000 | 2        |
+	And I have the following charge lines on the checkout order
+	| Name     | Total      | Sequence |
+	| Total    | 200.00000  | 4        |
+	| Subtotal | 100.00000  | 1        |
+	| Tax      | 50.000000  | 2        |
+	When I create the checkout order form tag value
+	Then the checkout order form tag value should be
+"""
+Order ID: 12345
+
+Billing Information:
+billing first name billing last name
+billing organization
+billing address
+billing city, billing state billing zip
+billing country
+
+user phone
+user email
+
+Shipping Information:
+shipping first name shipping last name
+shipping organization
+shipping address
+shipping address2
+shipping city, shipping state shipping zip
+shipping country
+
+product #1 (prod1)
+Price: $23.43
+Quantity: 1
+
+product #2 (prod2)
+Price: $50.00
+Quantity: 2
+
+Subtotal: $100.00
+Tax: $50.00
+Total: $200.00
+"""
+
+
+Scenario: Valid order without shipping street 2
+	Given I have a checkout order
+	And the imis order information on the checkout order is
+	| Field   | Value |
+	| OrderId | 12345 |
+	And the billing and shipping information on the checkout order is
+	| Field               | Value                |
+	| BillingFirstName    | billing first name   |
+	| BillingLastName     | billing last name    |
+	| BillingOrganization | billing organization |
+	| BillingAddress      | billing address      |
+	| BillingAddress2     | billing address2     |
+	| BillingCity         | billing city         |
+	| BillingState        | billing state        |
+	| BillingZip          | billing zip          |
+	| BillingCountry      | billing country      |
+	| UserPhone           | user phone           |
+	| UserEmail           | user email           |
+	| ShippingFirstName   | shipping first name  |
+	| ShippingLastName    | shipping last name   |
+	| ShippingOrganization | shipping organization |
+	| ShippingAddress     | shipping address     |
+	
+	| ShippingCity        | shipping city        |
+	| ShippingState       | shipping state       |
+	| ShippingZip         | shipping zip         |
+	| ShippingCountry     | shipping country     |
+	And the following purchased items are on the checkout order
+	| Name       | ProductCode | Price     | Quantity |
+	| product #1 | prod1       | 23.430000 | 1        |
+	| product #2 | prod2       | 50.000000 | 2        |
+	And I have the following charge lines on the checkout order
+	| Name     | Total      | Sequence |
+	| Total    | 200.00000  | 4        |
+	| Subtotal | 100.00000  | 1        |
+	| Tax      | 50.000000  | 2        |
+	When I create the checkout order form tag value
+	Then the checkout order form tag value should be
+"""
+Order ID: 12345
+
+Billing Information:
+billing first name billing last name
+billing organization
+billing address
+billing address2
+billing city, billing state billing zip
+billing country
+
+user phone
+user email
+
+Shipping Information:
+shipping first name shipping last name
+shipping organization
+shipping address
+shipping city, shipping state shipping zip
+shipping country
+
+product #1 (prod1)
+Price: $23.43
+Quantity: 1
+
+product #2 (prod2)
+Price: $50.00
+Quantity: 2
+
+Subtotal: $100.00
+Tax: $50.00
+Total: $200.00
+"""
+
+
+Scenario: Order with downloadable products
+	Given I have a checkout order
+	And the imis order information on the checkout order is
+	| Field   | Value |
+	| OrderId | 12345 |
+	And the billing and shipping information on the checkout order is
+	| Field               | Value                |
+	| BillingFirstName    | billing first name   |
+	| BillingLastName     | billing last name    |
+	| BillingOrganization | billing organization |
+	| BillingAddress      | billing address      |
+	| BillingAddress2     | billing address 2    |
+	| BillingCity         | billing city         |
+	| BillingState        | billing state        |
+	| BillingZip          | billing zip          |
+	| BillingCountry      | billing country      |
+	| UserPhone           | user phone           |
+	| UserEmail           | user email           |
+	| ShippingFirstName   | shipping first name  |
+	| ShippingLastName    | shipping last name   |
+	| ShippingOrganization | shipping organization |
+	| ShippingAddress     | shipping address     |
+	| ShippingAddress2    | shipping address 2   |
+	| ShippingCity        | shipping city        |
+	| ShippingState       | shipping state       |
+	| ShippingZip         | shipping zip         |
+	| ShippingCountry     | shipping country     |
+	And the following purchased items are on the checkout order
+	| Name       | ProductCode | Price     | Quantity | Downloadable | DownloadUrl |
+	| product #1 | prod1       | 23.430000 | 1        | true         | DOWNLOAD1   |
+	| product #2 | prod2       | 50.000000 | 2        | false        |             |
+	| product #3 | prod3       | 23.430000 | 1        | true         | DOWNLOAD2   |
+	And I have the following charge lines on the checkout order
+	| Name     | Total      | Sequence |
+	| Total    | 200.00000  | 4        |
+	| Subtotal | 100.00000  | 1        |
+	| Tax      | 50.000000  | 2        |
+	And the downloadable product link for url 'DOWNLOAD1' on order '12345' is 'DOWNLOAD1/Orders/DownloadHere/12345'
+	And the downloadable product link for url 'DOWNLOAD2' on order '12345' is 'DOWNLOAD2/Orders/DownloadHere/12345'
+	When I create the checkout order form tag value
+	Then the checkout order form tag value should be
+"""
+Order ID: 12345
+
+Billing Information:
+billing first name billing last name
+billing organization
+billing address
+billing address 2
+billing city, billing state billing zip
+billing country
+
+user phone
+user email
+
+Shipping Information:
+shipping first name shipping last name
+shipping organization
+shipping address
+shipping address 2
+shipping city, shipping state shipping zip
+shipping country
+
+product #1 (prod1)
+Price: $23.43
+Quantity: 1
+
+product #2 (prod2)
+Price: $50.00
+Quantity: 2
+
+product #3 (prod3)
+Price: $23.43
+Quantity: 1
+
+Subtotal: $100.00
+Tax: $50.00
+Total: $200.00
+
+Your order includes downloadable product(s) which can be downloaded here:
+product #1: DOWNLOAD1/Orders/DownloadHere/12345
+product #3: DOWNLOAD2/Orders/DownloadHere/12345
+"""
+
+Scenario: A coupon value exists
+	Given I have a checkout order
+	And the imis order information on the checkout order is
+	| Field   | Value |
+	| OrderId | 12345 |
+	And the billing and shipping information on the checkout order is
+	| Field               | Value                |
+	| BillingFirstName    | billing first name   |
+	| BillingLastName     | billing last name    |
+	| BillingOrganization | billing organization |
+	| BillingAddress      | billing address      |
+	| BillingAddress2     | billing address 2    |
+	| BillingCity         | billing city         |
+	| BillingState        | billing state        |
+	| BillingZip          | billing zip          |
+	| BillingCountry      | billing country      |
+	| UserPhone           | user phone           |
+	| UserEmail           | user email           |
+	| ShippingFirstName   | shipping first name  |
+	| ShippingLastName    | shipping last name   |
+	| ShippingOrganization | shipping organization |
+	| ShippingAddress     | shipping address     |
+	| ShippingAddress2    | shipping address 2   |
+	| ShippingCity        | shipping city        |
+	| ShippingState       | shipping state       |
+	| ShippingZip         | shipping zip         |
+	| ShippingCountry     | shipping country     |
+	And the following purchased items are on the checkout order
+	| Name       | ProductCode | Price     | Quantity |
+	| product #1 | prod1       | 23.430000 | 1        |
+	| product #2 | prod2       | 50.000000 | 2        |
+	And I have the following charge lines on the checkout order
+	| Id       | Name     | Total      | Sequence |
+	| Total    | Total    | 145.00000  | 4        |
+	| Coupon   | Coupon   | -5.00000   | 3        |
+	| Subtotal | Subtotal | 100.00000  | 1        |
+	| Tax      | Tax      | 50.000000  | 2        |
+	When I create the checkout order form tag value
+	Then the checkout order form tag value should be
+"""
+Order ID: 12345
+
+Billing Information:
+billing first name billing last name
+billing organization
+billing address
+billing address 2
+billing city, billing state billing zip
+billing country
+
+user phone
+user email
+
+Shipping Information:
+shipping first name shipping last name
+shipping organization
+shipping address
+shipping address 2
+shipping city, shipping state shipping zip
+shipping country
+
+product #1 (prod1)
+Price: $23.43
+Quantity: 1
+
+product #2 (prod2)
+Price: $50.00
+Quantity: 2
+
+Coupon: ($5.00)
+Subtotal: $95.00
+Tax: $50.00
+Total: $145.00
+"""

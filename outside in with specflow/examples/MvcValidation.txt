@@ -1,0 +1,21 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
+using System.Web.Mvc;
+using FluentValidation;
+using FluentValidation.Mvc;
+using Should;
+using FluentValidation.Mvc.MetadataExtensions;
+using TechTalk.SpecFlow;
+
+
+
+            var controller = new CheckoutController();
+
+            var validator = new CheckoutFormValidator();
+            var results = validator.Validate(checkoutForm);
+            results.AddToModelState(controller.ModelState, "");
+
+            ScenarioContext.Current.Set(controller.ModelState);
+
+            return controller.Index(checkoutForm);

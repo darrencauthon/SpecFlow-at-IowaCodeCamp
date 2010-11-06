@@ -1,0 +1,112 @@
+﻿Feature: Create shipping options based on country and weight
+	In order to provide correct shipping options to the customer
+	As the system
+	I want to be compute the shipping options based on country and weight
+
+Background:
+	Given the UPS name for 'UPS G' is 'UPS GROUND'
+	And the UPS name for 'UPS Z' is 'UPS ZZ'
+
+Scenario: Pulls matching weight 
+	Given my cart weight is 1.0
+	And my country is Andorra
+	And I have the following countries with zones
+	| Country    | Zone     |
+	| Australia  | 138      |
+    | Andorra    | 407      |
+	| Argentina  | 406      |
+	And I have the following shipping rates
+	| Zone   | Weight      | Rate      | ShipMethod |
+	| 138    | 1.0         | 6.15      | UPS G      |
+	| 138    | 2.0         | 8.15      | UPS G      |
+	| 407    | 1.0         | 7.15      | UPS G      |
+	| 406    | 1.0         | 10.15     | UPS G      |
+	| 407    | 2.0         | 11.15     | UPS G      |
+	When I compute the shipping options based on country
+	Then I should have the following shipping options
+	| ShippingMethod | Cost   | Name       |
+	| UPS G          | 7.15   | UPS GROUND |
+
+Scenario: Ignores weights lower than what is in the cart
+	Given my cart weight is 1.0
+	And my country is Andorra
+	And I have the following countries with zones
+	| Country    | Zone     |
+	| Australia  | 138      |
+    | Andorra    | 407      |
+	| Argentina  | 406      |
+	And I have the following shipping rates
+	| Zone   | Weight      | Rate      | ShipMethod |
+	| 138    | 1.0         | 6.15      | UPS G      |
+	| 138    | 2.0         | 8.15      | UPS G      |
+	| 407    | 0.1         | 1.15      | UPS G      |
+	| 407    | 1.0         | 7.15      | UPS G      |
+	| 406    | 1.0         | 10.15     | UPS G      |
+	| 407    | 2.0         | 11.15     | UPS G      |
+	When I compute the shipping options based on country
+	Then I should have the following shipping options
+	| ShippingMethod | Cost   | Name       |
+	| UPS G          | 7.15   | UPS GROUND |
+
+Scenario: Picks the next highest weight when inbetween a range
+	Given my cart weight is 1.5
+	And my country is Andorra
+	And I have the following countries with zones
+	| Country    | Zone     |
+	| Australia  | 138      |
+    | Andorra    | 407      |
+	| Argentina  | 406      |
+	And I have the following shipping rates
+	| Zone   | Weight      | Rate      | ShipMethod |
+	| 138    | 1.0         | 6.15      | UPS G      |
+	| 138    | 2.0         | 8.15      | UPS G      |
+	| 407    | 0.1         | 1.15      | UPS G      |
+	| 407    | 1.0         | 7.15      | UPS G      |
+	| 407    | 2.0         | 11.15     | UPS G      |
+	| 406    | 1.0         | 10.15     | UPS G      |
+	When I compute the shipping options based on country
+	Then I should have the following shipping options
+	| ShippingMethod | Cost   | Name       |
+	| UPS G          | 11.15  | UPS GROUND |
+
+Scenario: Returns multiple options when they exist
+	Given my cart weight is 1.0
+	And my country is Andorra
+	And I have the following countries with zones
+	| Country    | Zone     |
+	| Australia  | 138      |
+    | Andorra    | 407      |
+	| Argentina  | 406      |
+	And I have the following shipping rates
+	| Zone   | Weight      | Rate      | ShipMethod |
+	| 407    | 0.1         | 1.15      | UPS G      |
+	| 407    | 1.0         | 7.15      | UPS G      |
+	| 407    | 2.0         | 11.15     | UPS G      |
+	| 407    | 1.0         | 11.15     | UPS Z      |
+	| 407    | 2.0         | 11.15     | UPS Z      |
+	When I compute the shipping options based on country
+	Then I should have the following shipping options
+	| ShippingMethod | Cost   | Name       |
+	| UPS G          | 7.15   | UPS GROUND |
+	| UPS Z          | 11.15  | UPS ZZ     |
+
+Scenario: Returns the highest weight when higher than the lowest weight
+	Given my cart weight is 3.0
+	And my country is Andorra
+	And I have the following countries with zones
+	| Country    | Zone     |
+	| Australia  | 138      |
+    | Andorra    | 407      |
+	| Argentina  | 406      |
+	And I have the following shipping rates
+	| Zone   | Weight      | Rate      | ShipMethod |
+	| 407    | 0.1         | 1.15      | UPS G      |
+	| 407    | 1.0         | 7.15      | UPS G      |
+	| 407    | 2.0         | 11.15     | UPS G      |
+	| 407    | 1.0         | 11.15     | UPS Z      |
+	| 407    | 2.0         | 12.15     | UPS Z      |
+	When I compute the shipping options based on country
+	Then I should have the following shipping options
+	| ShippingMethod | Cost   | Name       |
+	| UPS G          | 11.15  | UPS GROUND |
+	| UPS Z          | 12.15  | UPS ZZ     |

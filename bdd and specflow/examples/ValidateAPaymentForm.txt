@@ -1,0 +1,60 @@
+Feature: Validate a payment information form
+	In order to complete an order
+	As a customer
+	I want to be told if I have not filled out the payment information form correctly
+
+Background:
+	Given I am not logged in
+
+Scenario: Required fields when shipping is same as and not logged in
+	Given I am not logged in
+	And I enter the following string values into my payment information form
+	| Field               | Value                |
+	| CardNumber          |                      |
+	| NameOnCard          |                      |
+	And I enter the following int values into my payment information form
+	| Field               | Value                |
+	When I validate my payment information form
+	Then I should get the following 'Please correctly complete all required fields highlighted in red.' error on these fields
+	| Field               |
+	| CardNumber          |
+	| CreditCardType      |
+	| SecurityCode        |
+	| NameOnCard          |
+	| ExpirationMonth     |
+	| ExpirationYear      |
+
+Scenario: Must agree to terms
+	Given I am not logged in
+	And I enter the following string values into my payment information form
+	| Field               | Value                |
+	| CardNumber          |                      |
+	| NameOnCard          |                      |
+	And I enter the following int values into my payment information form
+	| Field               | Value                |
+	When I validate my payment information form
+	Then I should get the following 'You must agree to the Terms and Conditions of this product.' error on these fields
+	| Field                     |
+	| AgreeWithTermsAndServices |
+
+Scenario: The card is expired
+	Given the current date is 11/1/2010
+	And I enter the following int values into my payment information form
+	| Field           | Value      |
+	| ExpirationMonth | 10         |
+	| ExpirationYear  | 2010       |
+	When I validate my payment information form
+	Then I should get the following 'Credit card has expired.' error on these fields
+	| Field           |
+	| ExpirationMonth |
+	| ExpirationYear  |
+
+Scenario: The card is not expired
+	Given the current date is 11/1/2010
+	And I enter the following int values into my payment information form
+	| Field           | Value      |
+	| ExpirationMonth | 11         |
+	| ExpirationYear  | 2010       |
+	When I validate my payment information form
+	Then I should get the following 'The card you entered has expired.' error on these fields
+	| Field           |

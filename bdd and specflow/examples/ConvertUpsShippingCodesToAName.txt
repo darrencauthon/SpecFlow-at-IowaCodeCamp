@@ -1,0 +1,19 @@
+Feature: Convert UPS shipping codes to a name
+	In order to show users what UPS shipping they will use
+	As the system
+	I want to convert UPS shipping codes to names
+
+Scenario Outline: Shipping codes
+  When I get the name for ups shipping code '<ShippingCode>'
+  Then I should get the ups name '<Name>'
+
+  Examples:
+    | ShippingCode | Name                   |
+    | UPS G        | UPS Ground             |
+    | UPS 1D       | UPS 1-Day              |
+    | UPS 3D       | UPS 3-Day              |
+    | UPS 2D       | UPS 2-Day              |
+    | UPS          | UPS                    |
+    | UPS WWE      | UPS Worldwide Express  |
+    | UPS WWS      | UPS Worldwide Standard |
+	  | NO MATCH     | NO MATCH               |

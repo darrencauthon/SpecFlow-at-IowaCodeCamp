@@ -1,0 +1,439 @@
+Feature: Determine which coupons are available for the current user
+	In order to allow users to use coupons when checking out
+	As the system
+	I want to determine which coupons are available
+
+Background:
+	Given the current date is 7/14/2010 13:31
+	And my current email address is 'test@test.com'
+
+Scenario: Valid coupon
+	Given I have the following coupon data
+	| Active | Code  | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| true   | valid | Valid Coupon #1 | Dollar    | 0                  |                 | 1.00           |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.50     |
+
+Scenario: Inactive coupon
+	Given I have the following coupon data
+	| Active | Code    | Name              | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| false  | invalid | Invalid Coupon #1 | Dollar    | 0                  |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'invalid' coupon
+	Then I should not get a coupon
+
+Scenario: Coupon code is not found
+	Given I have the following coupon data
+	| Active | Code     | Name              | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| true   | no match | Invalid Coupon #1 | Dollar    | 0                  |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: Coupon code is a case-insensitive match
+	Given I have the following coupon data
+	| Active | Code  | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| true   | VALiD | Valid Coupon #1 | Dollar    | 0                  |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| VALiD | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.50     |
+
+
+Scenario: Pulls correct coupon when there are multiple coupons in data
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| false  | 123     | Product 123     | Dollar    | 0                  |                 |  1.00          |           |            |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 0                  |                 |  1.00          |           |            |
+	| true   | Invalid | Invalid         | Dollar    | 0                  |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.50     |
+
+Scenario: The cart total reaches the coupon total
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 11.23              |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	| two    | 1.23    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.50     |
+
+Scenario: The cart total does not reach the required amount
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 11.23              |                 |  1.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	| two    | 1.22    | 1        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: The value type is dollar and the coupon is valid
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount  | StartDate | ExpireDate |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 11.23              |                 |  10.00          |           |            |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	| two    | 1.40    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 10.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 5.00     |
+
+Scenario: The value type is dollar and the cart total is less than the value of the coupon
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount  | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 1.00               |                 |  9.99           |           |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 5.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 5.00     |
+
+Scenario: The start date on the coupon is in the future
+	Given the current date is 7/14/2010
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate  | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 1.00               |                 |  1.00           | 7/15/2010 |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: The expire date on the coupon is in the past
+	Given the current date is 7/16/2010
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate  | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 1.00               |                 |  1.00           |           | 7/15/2010  |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: The expire date is today
+	Given the current date is 7/15/2010 23:50:00
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate  | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar    | 1.00               |                 |  1.00           |           | 7/15/2010  |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.00     |
+
+Scenario: The value type is percentage
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Percentage | 1.00               | 50              | 1.00           |           |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 5.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 2.50     |
+
+Scenario: The percent discount is greater than the entire order
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Percentage | 1.00               | 120             | 1.00           |           |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value  | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 10.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 5.00     |
+
+Scenario: The percent discount is greater than the maximum value
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Percentage | 1.00               | 40              | 1.00           |           |            | 4.00         | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 4.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 2.00     |
+
+Scenario: The dollar discount is greater than the maximum value
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 1.00               | 40              | 1.00           |           |            | 1.00         | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.50     |
+
+Scenario: No products in the cart match the allowed products
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 1.00               | 40              | 1.00           |           |            | 0.99         | false       |
+	And the 'valid' coupon is restricted to the following products
+	| ProductCode |
+	| two         |
+	| three       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 5.00    | 2        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: All of the products in the cart match the allowed products
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 1.00               | 40              | 1.00           |           |            |              | false       |
+	And the 'valid' coupon is restricted to the following products
+	| ProductCode |
+	| two         |
+	| three       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 1.00    | 1        |
+	| two    | 2.00    | 1        |
+	| three  | 3.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| three       | 1.00     |
+
+Scenario: Some of the products in the cart match the allowed products
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 1.00               | 40              | 1.00           |           |            |              | false       |
+	And the 'valid' coupon is restricted to the following products
+	| ProductCode |
+	| one         |
+	| three       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 1.00    | 1        |
+	| two    | 2.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.00     |
+
+Scenario: The sum of the products that match available products is less than the minimum order amount
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 2.50               | 40              | 1.00           |           |            |              | false       |
+	And the 'valid' coupon is restricted to the following products
+	| ProductCode |
+	| one         |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 1.00    | 1        |
+	| two    | 2.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: The value type is percentage and some of the products in the cart match the allowed products
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Percentage | 0.01               | 40              | 1.00           |           |            |              | false       |
+	And the 'valid' coupon is restricted to the following products
+	| ProductCode |
+	| one         |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 1.00    | 1        |
+	| two    | 2.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 0.40  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.40     |
+
+Scenario: The percentage calculation will result in extra decimals on the amount
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Percentage | 0.01               | 40.555555       | 1.00           |           |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 1.00    | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 0.41  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 0.41     |
+
+Scenario: The dollar calculation will result in extra decimals on the amount
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount  | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40.555555       | 1.007           |           |            |              | false       |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 50.00   | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.01  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.01     |
+
+Scenario: Coupon is single use and the coupon has been used by this email address before
+	Given my current email address is 'coupon@testing.com'
+	And a coupon for 'valid' has already been used by email address 'coupon@testing.com'
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.00           |           |            |              | true        |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 50.00   | 1        |
+	When I get the 'valid' coupon
+	Then I should not get a coupon
+
+Scenario: Coupon is single use and the coupon has not been used by this email address before
+	Given my current email address is 'coupon@testing.com'
+	And a coupon for 'valid' has already been used by email address 'somethingelse@test.com'
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.00           |           |            |              | true        |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 50.00   | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.00     |
+
+Scenario: Coupon has free ground shipping
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   | FreeGroundShipping |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.00           |           |            |              | true        | true               |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 50.00   | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | true               |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.00     |
+
+Scenario: Coupon does not have free ground shipping
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   | FreeGroundShipping |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.00           |           |            |              | true        | false              |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 50.00   | 1        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount |
+	| one         | 1.00     |
+
+Scenario: Basic rounding issue with one negative penny difference with dollar coupon and one item
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   | FreeGroundShipping |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.00           |           |            |              | true        | false              |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 3.33    | 3        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.00  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount | RoundingRemainder |
+	| one         | 0.33     | 0.01              |
+
+Scenario: Basic rounding issue with one positive penny difference with dollar coupon and one item
+	Given I have the following coupon data
+	| Active | Code    | Name            | ValueType  | MinimumOrderAmount | PercentDiscount | DollarDiscount | StartDate | ExpireDate | MaximumValue | SingleUse   | FreeGroundShipping |
+	| true   | valid   | Valid Coupon #1 | Dollar     | 0.01               | 40              | 1.01           |           |            |              | true        | false              |
+	And I have the following products in my cart
+	| Id     | Price   | Quantity |
+	| one    | 3.33    | 3        |
+	When I get the 'valid' coupon
+	Then I should get the following coupon
+	| Code  | Name            | Value | FreeGroundShipping |
+	| valid | Valid Coupon #1 | 1.01  | false              |
+	And I should have the following coupon line item discounts
+	| ProductCode | Discount | RoundingRemainder |
+	| one         | 0.34     | -0.01             |
