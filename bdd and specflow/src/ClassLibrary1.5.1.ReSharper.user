@@ -7,8 +7,16 @@
     </boolean>
   </SettingsComponent>
   <RecentFiles>
-    <RecentFiles />
-    <RecentEdits />
+    <RecentFiles>
+      <File id="5041D163-6983-4A8B-8F9D-BA7DE4BD525B/d:Steps/f:CalculatorSteps.cs" caret="127" fromTop="6" />
+      <File id="5041D163-6983-4A8B-8F9D-BA7DE4BD525B/d:Features/f:Subtraction.feature" caret="308" fromTop="11" />
+      <File id="C310B720-39E8-4C9F-9753-BFCC008C4633/f:Calculator.cs" caret="541" fromTop="25" />
+      <File id="5041D163-6983-4A8B-8F9D-BA7DE4BD525B/d:Features/f:Addition.feature" caret="172" fromTop="8" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="5041D163-6983-4A8B-8F9D-BA7DE4BD525B/d:Features/f:Addition.feature" caret="117" fromTop="5" />
+      <File id="5041D163-6983-4A8B-8F9D-BA7DE4BD525B/d:Steps/f:CalculatorSteps.cs" caret="96" fromTop="5" />
+    </RecentEdits>
   </RecentFiles>
   <NAntValidationSettings>
     <NAntPath value="" />

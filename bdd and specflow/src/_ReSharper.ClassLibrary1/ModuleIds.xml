@@ -1,3 +1,4 @@
 <Modules>
   <Module PersistentId="C310B720-39E8-4C9F-9753-BFCC008C4633" ModuleId="ClassLibrary1" />
+  <Module PersistentId="5041D163-6983-4A8B-8F9D-BA7DE4BD525B" ModuleId="ClassLibrary1.Specs" />
 </Modules>

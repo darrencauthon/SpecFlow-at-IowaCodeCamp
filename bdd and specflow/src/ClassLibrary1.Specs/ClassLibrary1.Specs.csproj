@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1480B613-63B6-4B99-A987-3277CD00BEBB}</ProjectGuid>
+    <ProjectGuid>{5041D163-6983-4A8B-8F9D-BA7DE4BD525B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MvcApplication1.Specs</RootNamespace>
-    <AssemblyName>MvcApplication1.Specs</AssemblyName>
+    <RootNamespace>ClassLibrary1.Specs</RootNamespace>
+    <AssemblyName>ClassLibrary1.Specs</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,31 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentValidation">
-      <HintPath>..\..\lib\MvcTurbine.FluentValidation\FluentValidation.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentValidation.Mvc">
-      <HintPath>..\..\lib\MvcTurbine.FluentValidation\FluentValidation.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\MvcTurbine\Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\MvcTurbine\Unity\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\lib\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="MvcTurbine">
-      <HintPath>..\..\lib\MvcTurbine\MvcTurbine.dll</HintPath>
-    </Reference>
-    <Reference Include="MvcTurbine.Unity">
-      <HintPath>..\..\lib\MvcTurbine\Unity\MvcTurbine.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="MvcTurbine.Web">
-      <HintPath>..\..\lib\MvcTurbine\MvcTurbine.Web.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\nunit.framework.dll</HintPath>
@@ -65,9 +42,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,29 +52,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Features\Promotion.feature.cs">
+    <Compile Include="Features\Addition.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Promotion.feature</DependentUpon>
+      <DependentUpon>Addition.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Subtraction.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Subtraction.feature</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steps\MvcSteps.cs" />
-    <Compile Include="Steps\PrizeWinningRecorderSteps.cs" />
-    <Compile Include="Steps\PromotionControllerSteps.cs" />
-    <Compile Include="Steps\PromotionFormSteps.cs" />
-    <Compile Include="Steps\PromotionSteps.cs" />
+    <Compile Include="Steps\CalculatorSteps.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MvcApplication1\MvcApplication1.csproj">
-      <Project>{E33DAA23-60B0-443F-83AB-36D98D54123F}</Project>
-      <Name>MvcApplication1</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Features\Promotion.feature">
+    <None Include="Features\Addition.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Promotion.feature.cs</LastGenOutput>
+      <LastGenOutput>Addition.feature.cs</LastGenOutput>
     </None>
+    <None Include="Features\Subtraction.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Subtraction.feature.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj">
+      <Project>{C310B720-39E8-4C9F-9753-BFCC008C4633}</Project>
+      <Name>ClassLibrary1</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
